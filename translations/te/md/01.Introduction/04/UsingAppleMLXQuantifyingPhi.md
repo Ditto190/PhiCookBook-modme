@@ -1,0 +1,64 @@
+# **Apple MLX ఫ్రేమ్‌వర్క్ ఉపయోగించి Phi-3.5 ని క్వాంటైజింగ్ చేయడం**
+
+
+MLX అనేది Apple silicon పై యంత్ర అభ్యాస పరిశోధన కోసం ఒక అరే ఫ్రేమ్‌వర్క్, దీనిని Apple యంత్ర అభ్యాస పరిశోధన ద్వారా మీకొరకు తీసుకురావబడింది.
+
+MLX ను యంత్ర అభ్యాస పరిశోధకులచే యంత్ర అభ్యాస పరిశోధకుల కోసం రూపకల్పన చేశారు. ఫ్రేమ్‌వర్క్ వినియోగదారుల కోసం స్నేహపూర్వకంగా ఉండే విధంగా ఉద్దేశించబడినప్పటికీ, మోడళ్లను శిక్షణ ఇచ్చి despley చేయడంలో ఇంకా సమర్థవంతంగా ఉంటుంది. ఫ్రేమ్‌వర్క్ యొక్క డిజైన్ స్వయంగా కాన్సెప్చువల్‌గా కూడా స‌రళమైనది. కొత్త ఆలోచనలు త్వరగా పరిశీలించడానికి లక్ష్యంగా, పరిశోధకులు MLX ను విస్తరించడానికి మరియు మెరుగుపరచడానికి మేము సులభతరంగా చేయాలని ఆశిస్తున్నాం.
+
+MLX ద్వారా Apple Silicon పరికరాల్లో LLM లను వేగవంతం చేయవచ్చు, మరియు మోడళ్లను స్థానికంగా చాలా సౌకర్యవంతంగా నడపవచ్చు.
+
+Now Apple MLX Framework supports quantization conversion of Phi-3.5-Instruct(**Apple MLX ఫ్రేమ్‌వర్క్ మద్దతు**), Phi-3.5-Vision(**MLX-VLM ఫ్రేమ్‌వర్క్ మద్దతు**) మద్దతు**), and Phi-3.5-MoE(**Apple MLX ఫ్రేమ్‌వర్క్ మద్దతు**). Let's try it next:
+
+### **Phi-3.5-Instruct**
+
+
+```bash
+
+python -m mlx_lm.convert --hf-path microsoft/Phi-3.5-mini-instruct -q
+
+```
+
+
+### **Phi-3.5-Vision**
+
+
+```bash
+
+python -m mlxv_lm.convert --hf-path microsoft/Phi-3.5-vision-instruct -q
+
+```
+
+### **Phi-3.5-MoE**
+
+
+```bash
+
+python -m mlx_lm.convert --hf-path microsoft/Phi-3.5-MoE-instruct  -q
+
+```
+
+
+
+### **🤖 Phi-3.5 కోసం Apple MLX నమూనాలు**
+
+| ల్యాబ్‌లు    | పరిచయం | వెళ్ళండి |
+| -------- | ------- |  ------- |
+| 🚀 ల్యాబ్-పరిచయం Phi-3.5 Instruct  | Apple MLX ఫ్రేమ్‌వర్క్ తో Phi-3.5 Instruct ఉపయోగించడం ఎలా నేర్చుకోవాలో   |  [వెళ్ళండి](../../../code/09.UpdateSamples/Aug/mlx-phi35-instruct.ipynb)    |
+| 🚀 ల్యాబ్-పరిచయం Phi-3.5 Vision (image) | Apple MLX ఫ్రేమ్‌వర్క్ తో చిత్రం విశ్లేషించడానికి Phi-3.5 Vision ఎలా ఉపయోగించాలో నేర్చుకోండి     |  [వెళ్ళండి](../../../code/09.UpdateSamples/Aug/mlx-phi35-vision.ipynb)    |
+| 🚀 ల్యాబ్-పరిచయం Phi-3.5 Vision (moE)   | Apple MLX ఫ్రేమ్‌వర్క్ తో Phi-3.5 MoE ఎలా ఉపయోగించాలో నేర్చుకోండి  |  [వెళ్ళండి](../../../code/09.UpdateSamples/Aug/mlx-phi35-moe.ipynb)    |
+
+
+## **వనరులు**
+
+1. Apple MLX ఫ్రేమ్‌వర్క్ గురించి తెలుసుకోండి [https://ml-explore.github.io/mlx/](https://ml-explore.github.io/mlx/)
+
+2. Apple MLX GitHub రిపో [https://github.com/ml-explore](https://github.com/ml-explore/mlx)
+
+3. MLX-VLM GitHub రిపో [https://github.com/Blaizzy/mlx-vlm](https://github.com/Blaizzy/mlx-vlm)
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+అస్పష్టీకరణ:
+ఈ పత్రం AI అనువాద సేవ [Co-op Translator](https://github.com/Azure/co-op-translator) ఉపయోగించి అనువదించబడింది. మేము ఖచ్చితత్వానికి ప్రయత్నించినప్పటికీ ఆటోమేటెడ్ అనువాదాల్లో తప్పులు లేదా లోపాలు ఉండవచ్చు అని దయచేసి గమనించండి. మూల పత్రాన్ని దాని స్థానిక భాషలోని అసలైన మూలంగా పరిగణించాలి. ముఖ్యమైన సమాచారానికి వృత్తిపరమైన మానవ అనువాదం చేయించుకోవాలని సూచిస్తున్నాము. ఈ అనువాదాన్ని ఉపయోగించడంవల్ల ఏర్పడే ఏవైనా అపోహలు లేదా తప్పుగా అర్థం చేసుకోవడాలకు మేము బాధ్యులు కాదని తెలియజేస్తున్నాము.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

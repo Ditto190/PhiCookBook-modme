@@ -1,0 +1,16 @@
+**Fine-tuning Phi-3 cu QLoRA**
+
+Fine-tuning modelului de limbaj Phi-3 Mini de la Microsoft folosind [QLoRA (Quantum Low-Rank Adaptation)](https://github.com/artidoro/qlora).
+
+QLoRA va ajuta la îmbunătățirea înțelegerii conversaționale și generării răspunsurilor.
+
+Pentru a încărca modelele în 4 biți cu transformers și bitsandbytes, trebuie să instalezi accelerate și transformers din sursă și să te asiguri că ai cea mai recentă versiune a bibliotecii bitsandbytes.
+
+**Exemple**
+- [Află mai multe cu acest notebook exemplu](../../../../code/03.Finetuning/Phi_3_Inference_Finetuning.ipynb)
+- [Exemplu de FineTuning în Python](../../../../code/03.Finetuning/FineTrainingScript.py)
+- [Exemplu de Fine Tuning pe Hugging Face Hub cu LORA](../../../../code/03.Finetuning/Phi-3-finetune-lora-python.ipynb)
+- [Exemplu de Fine Tuning pe Hugging Face Hub cu QLORA](../../../../code/03.Finetuning/Phi-3-finetune-qlora-python.ipynb)
+
+**Declinare de responsabilitate**:  
+Acest document a fost tradus folosind serviciul de traducere AI [Co-op Translator](https://github.com/Azure/co-op-translator). Deși ne străduim pentru acuratețe, vă rugăm să rețineți că traducerile automate pot conține erori sau inexactități. Documentul original în limba sa nativă trebuie considerat sursa autorizată. Pentru informații critice, se recomandă traducerea profesională realizată de un specialist uman. Nu ne asumăm răspunderea pentru eventualele neînțelegeri sau interpretări greșite rezultate din utilizarea acestei traduceri.

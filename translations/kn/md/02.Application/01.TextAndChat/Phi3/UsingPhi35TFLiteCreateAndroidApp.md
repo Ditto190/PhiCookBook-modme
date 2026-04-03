@@ -1,0 +1,114 @@
+# **Microsoft Phi-3.5 tflite ಬಳಸಿ Android ಅಪ್ಲಿಕೇಶನ್ ರಚಿಸುವುದು**
+
+ಇದು Microsoft Phi-3.5 tflite ಮಾದರಿಗಳನ್ನು ಬಳಸುವ Android ಉದಾಹರಣೆ.
+
+## **📚 ಜ್ಞಾನ**
+
+Android LLM Inference API ನಿಮಗೆ Android ಅಪ್ಲಿಕೇಷನ್‌ಗಳಿಗಾಗಿ ದೊಡ್ಡ ಭಾಷಾ ಮಾದರಿಗಳನ್ನು (LLMs) ಸಂಪೂರ್ಣವಾಗಿ ಡಿವೈಸ್‌ನಲ್ಲಿ ನಿರ್ವಹಿಸಲು ಅವಕಾಶ ನೀಡುತ್ತದೆ, ಇದನ್ನು ನೀವು ಪಠ್ಯ ರಚನೆ, ಪ್ರಕೃತಿ ಭಾಷೆಯಲ್ಲಿ ಮಾಹಿತಿಯನ್ನು ಪಡೆದುವುದು ಮತ್ತು ದಸ್ತಾವೇಜುಗಳನ್ನು ಸಾರಾಂಶಗೊಳಿಸುವಂತಹ ವಿವಿಧ ಕಾರ್ಯಗಳಿಗೆ ಬಳಸಬಹುದು. ಈ ಟಾಸ್ಕ್ ಹಲವು ಪಠ್ಯ-ನಡೆತದ ದೊಡ್ಡ ಭಾಷಾ ಮಾದರಿಗಳಿಗೆಲ್ಲಾ ನಿರ್ಮಿತ ಬೆಂಬಲವನ್ನು ಒದಗಿಸುತ್ತದೆ, ಆದ್ದರಿಂದ ನೀವು ನಿಮ್ಮ Android ಆ್ಯಪ್‌ಗಳಲ್ಲಿ ಇತ್ತೀಚಿನ on-device ಜನರೆಟಿವ್ AI ಮಾದರಿಗಳನ್ನು ಅನ್ವಯಿಸಬಹುದು.
+
+Googld AI Edge Torch ಒಂದು python ಲೈಬ್ರೆರಿಯಾಗಿದೆ, ಇದು PyTorch ಮಾದರಿಗಳನ್ನು .tflite ಫಾರ್ಮ್ಯಾಟ್‌ಗೆ ಪರಿವರ್ತಿಸುವುದಾಗಿ ಬೆಂಬಲಿಸುತ್ತದೆ, ನಂತರ ಅವುಗಳನ್ನು TensorFlow Lite ಮತ್ತು MediaPipe ನೊಂದಿಗೆ ರನ್ ಮಾಡಬಹುದು. ಇದು Android, iOS ಮತ್ತು IoT ಅಪ್ಲಿಕೇಶನ್‌ಗಳಿಗೆ ಸಂಪೂರ್ಣವಾಗಿ ಡಿವೈಸ್‌ನಲ್ಲಿ ಮಾದರಿಗಳನ್ನು ಚಾಲನೆ ಮಾಡಲು ಸಾಧ್ಯವಾಗಿಸುತ್ತದೆ. AI Edge Torch ವಿಸ್ತೃತ CPU ಕವರೆಜ್ ಅನ್ನು ನೀಡುತ್ತದೆ, ಪ್ರಾಥಮಿಕ GPU ಮತ್ತು NPU ಬೆಂಬಲದೊಂದಿಗೆ. AI Edge Torch PyTorch ಜೊತೆಗೆ ನಿಕಟವಾಗಿ ಏಕತೆಗೊಳ್ಳೋದಕ್ಕೆ ಪ್ರಯತ್ನಿಸುತ್ತದೆ, torch.export() ಮೇಲೆ ನಿರ್ಮಿಸಿ Core ATen ಆಪರೇಟರ್ಗಳ ಉತ್ತಮ ಕವರೆಜ್ ಅನ್ನು ಒದಗಿಸುತ್ತದೆ.
+
+## **🪬 ಮಾರ್ಗದರ್ಶಿ**
+
+### **🔥 Microsoft Phi-3.5 ಅನ್ನು tflite ಗೆ ಪರಿವರ್ತಿಸುವುದು**
+
+0. ಈ ಉದಾಹರಣೆ Android 14+ ಗಾಗಿ ಇದೆ
+
+1. Python 3.10.12 ಅನ್ನು ಸ್ಥಾಪಿಸಿ
+
+***Suggestion:*** ನಿಮ್ಮ Python ಪರಿಸರವನ್ನು ಸ್ಥಾಪಿಸಲು conda ಬಳಸಿ
+
+2. Ubuntu 20.04 / 22.04 (ದಯವಿಟ್ಟು [google ai-edge-torch](https://github.com/google-ai-edge/ai-edge-torch) ಮೇಲೆ ಗಮನ ಕೇಂದ್ರೀಕರಿಸಿ)
+
+***Suggestion:*** ನಿಮ್ಮ ಪರಿಸರವನ್ನು ರಚಿಸಲು Azure Linux VM ಅಥವಾ 3rd party cloud vm ಬಳಸಿ
+
+3. ನಿಮ್ಮ Linux bash , Python ಗ್ರಂಥಾಲಯವನ್ನು ಸ್ಥಾಪಿಸಲು ```bash
+
+git clone https://github.com/google-ai-edge/ai-edge-torch.git
+
+cd ai-edge-torch
+
+pip install -r requirements.txt -U 
+
+pip install tensorflow-cpu -U
+
+pip install -e .
+
+```
+
+4. Hugging face ನಿಂದ Microsoft-3.5-Instruct ಅನ್ನು ಡೌನ್ಲೋಡ್ ಮಾಡಿ
+
+
+```bash
+
+git lfs install
+
+git clone  https://huggingface.co/microsoft/Phi-3.5-mini-instruct
+
+```
+
+5. Microsoft Phi-3.5 ಅನ್ನು tflite ಗೆ ಪರಿವರ್ತಿಸಿ
+
+
+```bash
+
+python ai-edge-torch/ai_edge_torch/generative/examples/phi/convert_phi3_to_tflite.py --checkpoint_path  Your Microsoft Phi-3.5-mini-instruct path --tflite_path Your Microsoft Phi-3.5-mini-instruct tflite path  --prefill_seq_len 1024 --kv_cache_max_len 1280 --quantize True
+
+```
+
+
+### **🔥 Microsoft Phi-3.5 ಅನ್ನು Android Mediapipe ಬಂಡಲ್ ಗೆ ಪರಿವರ್ತಿಸುವುದು**
+
+ದಯವಿಟ್ಟು ಮೊದಲು mediapipe ಅನ್ನು ಇನ್ಸ್ಟಾಲ್ ಮಾಡಿ
+
+```bash
+
+pip install mediapipe
+
+```
+
+ಈ ಕೋಡ್ ಅನ್ನು [ನಿಮ್ಮ ನೋಟ್‌ಬುಕ್](../../../../code/09.UpdateSamples/Aug/Android/convert/convert_phi.ipynb) ನಲ್ಲಿ ಚಲಾಯಿಸಿ
+
+
+
+```python
+
+import mediapipe as mp
+from mediapipe.tasks.python.genai import bundler
+
+config = bundler.BundleConfig(
+    tflite_model='Your Phi-3.5 tflite model path',
+    tokenizer_model='Your Phi-3.5 tokenizer model path',
+    start_token='start_token',
+    stop_tokens=[STOP_TOKENS],
+    output_filename='Your Phi-3.5 task model path',
+    enable_bytes_to_unicode_mapping=True or Flase,
+)
+bundler.create_bundle(config)
+
+```
+
+
+### **🔥 adb push ಬಳಸಿ ಮಾದರಿಯನ್ನು ನಿಮ್ಮ Android ಸಾಧನದ ಪಥಕ್ಕೆ ಕಳುಹಿಸುವುದು**
+
+
+```bash
+
+adb shell rm -r /data/local/tmp/llm/ # ಮುಂದಿನದಾಗಿ ಲೋಡ್ ಮಾಡಲಾದ ಯಾವುದೇ ಮಾದರಿಗಳನ್ನು ತೆಗೆದುಹಾಕಿ
+
+adb shell mkdir -p /data/local/tmp/llm/
+
+adb push 'Your Phi-3.5 task model path' /data/local/tmp/llm/phi3.task
+
+```
+
+### **🔥 ನಿಮ್ಮ Android ಕೋಡ್ ಅನ್ನು ಚಾಲನೆ ಮಾಡುವುದು**
+
+![ಡೆಮೋ](../../../../../../translated_images/kn/demo.06d5a4246f057d1b.webp)
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+ಜವಾಬ್ದಾರಿ ನಿರಾಕರಣೆ:
+ಈ ದಸ್ತಾವೇಜನ್ನು AI ಅನುವಾದ ಸೇವೆ [Co-op Translator](https://github.com/Azure/co-op-translator) ಬಳಸಿ ಅನುವಾದಿಸಲಾಗಿದೆ. ನಾವು ನಿಖರತೆಯನ್ನು ಸಾಧಿಸಲು ಪ್ರಯತ್ನಿಸಿದರೂ ಸಹ, ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದಗಳಲ್ಲಿ ತಪ್ಪುಗಳು ಅಥವಾ ಅನಿಖರತೆಗಳು ಇರುವ ಸಾಧ್ಯತೆ ಇದೆ ಎಂದು ದಯವಿಟ್ಟು ಗಮನಿಸಿ. ಮೂಲ ಭಾಷೆಯಲ್ಲಿರುವ ಮೂಲ ದಸ್ತಾವೇಜನ್ನು ಅಧಿಕೃತ ಮೂಲವಾಗಿ ಪರಿಗಣಿಸಬೇಕು. ಗಂಭೀರ ಮಾಹಿತಿ සඳහා ವೃತ್ತಿಪರ ಮಾನವ ಅನುವಾದ ಮಾಡುವುದನ್ನು ಶಿಫಾರಸು ಮಾಡಲಾಗುತ್ತದೆ. ಈ ಅನುವಾದದ ಬಳಕೆಯಿಂದ ಉಂಟಾಗುವ ಯಾವುದೇ ತಪ್ಪು ಅರ್ಥಗ್ರಹಣೆಗಳು ಅಥವಾ ವಕ್ರಾರ್ಥಗಳಿಗಾಗಿ ನಾವು ಜವಾಬ್ದಾರಿಯಲ್ಲ.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

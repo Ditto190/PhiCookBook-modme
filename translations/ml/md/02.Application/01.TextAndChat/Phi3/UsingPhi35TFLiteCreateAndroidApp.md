@@ -1,0 +1,114 @@
+# **Microsoft Phi-3.5 tflite ഉപയോഗിച്ച് Android ആപ്പ് സൃഷ്ടിക്കൽ**
+
+ഇത് Microsoft Phi-3.5 tflite മോഡലുകൾ ഉപയോഗിക്കുന്ന ഒരു Android സാമ്പിൾ ആണ്.
+
+## **📚 ജ്ഞാനം**
+
+Android LLM Inference API നിങ്ങളെ Android അപ്ലിക്കേഷനുകൾക്ക് വേണ്ടി വലിയ ഭാഷാ മോഡലുകൾ (LLMs) പൂർണ്ണമായും on-device ആയി چلിപ്പിക്കാൻ അനുവദിക്കുന്നു, ഇതിലൂടെ നിങ്ങൾ എഴുത്ത് സൃഷ്ടിക്കൽ, ആസ്വഭാവിക ഭാഷാ രൂപത്തിൽ വിവരം തിരയൽ, ഡോക്യുമെന്റുകൾ സംക്ഷേപിക്കൽ എന്നിവ പോലുള്ള വൈവിധ്യമാർന്ന ജോലികൾ നടപ്പാക്കാൻ കഴിയും. ഈ ടാസ്ക് ബിൽറ്റ്-ഇൻ പിന്തുണança text-to-text പല വലിയ ഭാഷാ മോഡലുകൾക്കുമുണ്ട്, അതിനാൽ നിങ്ങൾ ഏറ്റവും പുതിയ on-device ജനറേറ്റീവ് AI മോഡലുകൾ നിങ്ങളുടെ Android ആപ്പുകളിൽ പ്രയോഗിക്കാവുന്നതാണ്.
+
+Googld AI Edge Torch ഒരു python ലൈബ്രറിയാണ്, അതിൽ PyTorch മോഡലുകളെ .tflite ഫോർമാറ്റിലേക്ക് കൺവേർട്ട് ചെയ്യാനുള്ള പിന്തുണ ഉണ്ട്, പിന്നീട് അവ TensorFlow Lite மற்றும் MediaPipe ഉപയോഗിച്ച് റൺ ചെയ്യാവുന്നതാണ്. ഇത് Android, iOS, IoT എന്നിവയ്ക്ക് വേണ്ടി മോഡലുകൾ പൂർണമായും on-device ആയി പ്രവർത്തിക്കാവുന്ന അപ്ലിക്കേഷനുകൾ സാധ്യമാക്കുന്നു. AI Edge Torch വിശാല CPU കവർേജും തുടക്കക്കാരനായ GPU, NPU പിന്തുണയും ഓഫർ ചെയ്യുന്നു. AI Edge Torch PyTorch-നുമായി അടുത്തുനേരം ഇന്റഗ്രേറ്റ് ചെയ്യുന്നതിനായി ശ്രമിക്കുന്നു, torch.export()-യുടെ മുകളിൽ നിർമ്മിച്ച് Core ATen operators ന്റെ നല്ല കവർേജും നൽകുന്നു.
+
+## **🪬 മാര്‍ഗ്ഗനിര്‍ദ്ദേശം**
+
+### **🔥 Microsoft Phi-3.5 നെ tflite പിന്തുണയായി മാറ്റുക**
+
+0. ഇത് Android 14+ വേണ്ടി ആണ്
+
+1. Python 3.10.12 ഇൻസ്റ്റാൾ ചെയ്യുക
+
+***Suggestion:*** Python env ഇൻസ്റ്റാൾ ചെയ്യാൻ conda ഉപയോഗിക്കുക
+
+2. Ubuntu 20.04 / 22.04 (ദയവായി [google ai-edge-torch](https://github.com/google-ai-edge/ai-edge-torch) ന് ശ്രദ്ധ കേന്ദ്രീകരിക്കുക)
+
+***Suggestion:*** Azure Linux VM അല്ലെങ്കിൽ 3rd party cloud vm ഉപയോഗിച്ച് നിങ്ങളുടെ env സൃഷ്ടിക്കുക
+
+3. Go to your Linux bash , to install Python library 
+```bash
+
+git clone https://github.com/google-ai-edge/ai-edge-torch.git
+
+cd ai-edge-torch
+
+pip install -r requirements.txt -U 
+
+pip install tensorflow-cpu -U
+
+pip install -e .
+
+```
+
+4. Download Microsoft-3.5-Instruct from Hugging face
+
+
+```bash
+
+git lfs install
+
+git clone  https://huggingface.co/microsoft/Phi-3.5-mini-instruct
+
+```
+
+5. Convert Microsoft Phi-3.5 to tflite
+
+
+```bash
+
+python ai-edge-torch/ai_edge_torch/generative/examples/phi/convert_phi3_to_tflite.py --checkpoint_path  Your Microsoft Phi-3.5-mini-instruct path --tflite_path Your Microsoft Phi-3.5-mini-instruct tflite path  --prefill_seq_len 1024 --kv_cache_max_len 1280 --quantize True
+
+```
+
+
+### **🔥 Microsoft Phi-3.5 നെ Android Mediapipe ബണ്ടിലേക്കായി മാറ്റുക**
+
+ദയവായി ആദ്യം mediapipe ഇൻസ്റ്റാൾ ചെയ്യുക
+
+```bash
+
+pip install mediapipe
+
+```
+
+run this code in [നിങ്ങളുടെ നോട്ട്‌బുക്ക്](../../../../code/09.UpdateSamples/Aug/Android/convert/convert_phi.ipynb)
+
+
+
+```python
+
+import mediapipe as mp
+from mediapipe.tasks.python.genai import bundler
+
+config = bundler.BundleConfig(
+    tflite_model='Your Phi-3.5 tflite model path',
+    tokenizer_model='Your Phi-3.5 tokenizer model path',
+    start_token='start_token',
+    stop_tokens=[STOP_TOKENS],
+    output_filename='Your Phi-3.5 task model path',
+    enable_bytes_to_unicode_mapping=True or Flase,
+)
+bundler.create_bundle(config)
+
+```
+
+
+### **🔥 adb push ഉപയോഗിച്ച് task മോഡൽ നിങ്ങളുടെ Android ഡിവൈസ് പാത്തിലേക്ക് തള്ളി**
+
+```bash
+
+adb shell rm -r /data/local/tmp/llm/ # മുൻപ് ലോഡ് ചെയ്ത ഏതെങ്കിലും മോഡലുകൾ നീക്കുക
+
+adb shell mkdir -p /data/local/tmp/llm/
+
+adb push 'Your Phi-3.5 task model path' /data/local/tmp/llm/phi3.task
+
+```
+
+### **🔥 നിങ്ങളുടെ Android കോഡ് ഓടിക്കൽ**
+
+![ഡെമോ](../../../../../../translated_images/ml/demo.06d5a4246f057d1b.webp)
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+ബാധ്യത ഒഴിവാക്കൽ:
+ഈ രേഖ AI തർജ്ജമാ സേവനമായ [Co-op Translator](https://github.com/Azure/co-op-translator) ഉപയോഗിച്ച് തർജ്ജമ ചെയ്തതാണ്. ഞങ്ങൾ കൃത്യതയ്ക്ക് ശ്രമിച്ചാലും, സ്വയം പ്രവർത്തിക്കുന്ന തർജ്മകളിൽ പിശകുകളോ അസാധുതകളോ ഉണ്ടായിരിക്കാമെന്നത് ദയവായി ശ്രദ്ധിക്കുക. ഇതിന്റെ മാതൃഭാഷയിലുള്ള യഥാർത്ഥ രേഖ തന്നെ അധികൃതമായ ഉറവിടമായി പരിഗണിക്കണം. നിർണായകമായ വിവരങ്ങൾക്ക് പ്രൊഫഷണൽ മാനവ തർജ്ജമ ശുപാർശ ചെയ്യപ്പെടുന്നു. ഈ തർജ്ജമ ഉപയോഗിച്ചതിൽനിന്ന് ഉണ്ടായേക്കാവുന്ന ഏതെങ്കിലും തെറ്റിദ്ധാരണകളോ തെറ്റായ വ്യാഖ്യാനങ്ങളോ സംബന്ധിച്ചുള്ള ബാധ്യതയ്ക്ക് ഞങ്ങൾ ഉത്തരവാദികളല്ല.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

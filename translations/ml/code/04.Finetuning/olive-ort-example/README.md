@@ -1,0 +1,65 @@
+# Olive ഉപയോഗിച്ച് Phi3 ഫൈൻ‑ട്യൂൺ ചെയ്യുക
+
+ഈ ഉദാഹരണത്തിൽ നിങ്ങൾ Olive ഉപയോഗിച്ച് ചെയ്യുന്നത്:
+
+1. LoRA അഡാപ്റ്ററെ വാചകങ്ങളെ Sad, Joy, Fear, Surprise എന്നിങ്ങനെ വർഗീകരിക്കാൻ ഫൈൻ‑ട്യൂൺ ചെയ്യുക.
+1. അഡാപ്റ്റർ വെയ്റ്റുകൾ ബേസ് മോഡലിലേക്ക് ലയിപ്പിക്കുക.
+1. മോഡൽ ഒപ്റ്റിമൈസ് ചെയ്യുകയും `int4` ആയി ക്വാന്റൈസ് ചെയ്യുകയും ചെയ്യുക.
+
+നാം ഫൈൻ‑ട്യൂൺ ചെയ്ത മോഡൽ ONNX Runtime (ORT) Generate API ഉപയോഗിച്ച് എങ്ങനെ ഇൻഫറൻസ് ചെയ്യാമെന്ന് പോലും കാണിക്കും.
+
+> **⚠️ ഫൈൻ‑ട്യൂണിംഗിനു, അനുയോജ്യമായ GPU ലഭ്യമാകണം - ഉദാഹരണത്തിന്, A10, V100, A100.**
+
+## 💾 Install
+
+ഒരു പുതിയ Python വേർച്ച്വൽ എൻവയോൺമെന്റ് സൃഷ്ടിക്കുക (ഉദാഹരണത്തിന് `conda` ഉപയോഗിച്ച്):
+
+```bash
+conda create -n olive-ai python=3.11
+conda activate olive-ai
+```
+
+Next, install the Olive and the dependencies for a fine-tuning workflow:
+
+```bash
+cd Phi-3CookBook/code/04.Finetuning/olive-ort-example
+pip install olive-ai[gpu]
+pip install -r requirements.txt
+```
+
+## 🧪 Olive ഉപയോഗിച്ച് Phi3 ഫൈൻ‑ട്യൂൺ ചെയ്യുക
+The [Olive configuration file](../../../../../code/04.Finetuning/olive-ort-example/phrase-classification.json) contains a *workflow* with the following *passes*:
+
+Phi3 -> LoRA -> MergeAdapterWeights -> ModelBuilder
+
+മേൽനോട്ടത്തിൽ, ഈ വർക്ക്‌ഫ്ലോ ചെയ്യുന്നത്:
+
+1. Phi3 നെ [dataset/data-classification.json](../../../../../code/04.Finetuning/olive-ort-example/dataset/dataset-classification.json) ഡാറ്റ ഉപയോഗിച്ച് (150 സ്റ്റെപ്പുകൾക്കായി, നിങ്ങൾ ഇത് മാറ്റാവുന്നതാണ്) ഫൈൻ‑ട്യൂൺ ചെയ്യുക.
+1. LoRA അഡാപ്റ്റർ വെയ്റ്റുകൾ ബേസ് മോഡലിലേക്ക് ലയിപ്പിക്കുക. ഇതിലൂടെ ONNX ഫോർമാറ്റിലുള്ള ഏക മോഡൽ ആർട്ടിഫാക്ട് നിങ്ങൾക്ക് ലഭിക്കും.
+1. Model Builder ONNX runtime ന് വേണ്ടി മോഡൽ ഒപ്റ്റിമൈസ് ചെയ്യുകയും മോഡൽ `int4` ആയി ക്വാന്റൈസ് ചെയ്യുകയും ചെയ്യും.
+
+വർക്ക്‌ഫ്ലോ പ്രവർത്തിപ്പിക്കാൻ, പ്രവർത്തിപ്പിക്കുക:
+
+```bash
+olive run --config phrase-classification.json
+```
+
+Olive പൂർത്തിയായപ്പോൾ, നിങ്ങളുടെ ഒപ്ടിമൈസ്ഡ് `int4` ഫൈൻ‑ട്യൂൺ ചെയ്ത Phi3 മോഡൽ ഇവിടെ ലഭ്യമാണ്: `code/04.Finetuning/olive-ort-example/models/lora-merge-mb/gpu-cuda_model`.
+
+## 🧑‍💻 നിങ്ങളുടെ അപ്ലിക്കേഷനില്‍ ഫൈൻ‑ട്യൂൺ ചെയ്ത Phi3 സംയോജിപ്പിക്കുക
+
+ആപ്പ് ഓടിക്കാൻ:
+
+```bash
+python app/app.py --phrase "cricket is a wonderful sport!" --model-path models/lora-merge-mb/gpu-cuda_model
+```
+
+ഈ മറുപടി ഒരു പദം മാത്രമായിരിക്കും — వാചകം ഏത് വർഗ്ഗമാണെന്ന് വ്യക്തമാക്കുന്നത് (Sad/Joy/Fear/Surprise).
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+ഡിസ്‌ക്ലെയ്മറ‍്:
+
+ഈ രേഖ [Co-op Translator](https://github.com/Azure/co-op-translator) എന്ന AI പരിഭാഷാ സേവനം ഉപയോഗിച്ച് വിവര്‍ത്തനം ചെയ്തത് ആണ്. ഞങ്ങൾ കൃത്യതയ്ക്ക് ശ്രമിച്ചാലും, യന്ത്രപരിഭാഷകളിൽ പിശകുകളും അപൂര്‍ണ്ണതകളും ഉണ്ടായേക്കാവുന്നതാണ് എന്ന് ദയവായി ഗൗരവത്തോടെ കരുതുക. മൂല രേഖ അതിന്റെ മാതൃഭാഷയിലെ പതിപ്പാണ് അതിന്റെ അധികാരപരമായ ഉറവിടമായിരിക്കേണ്ടത്. നിർണ്ണായകമായ വിവരങ്ങൾക്കായി പ്രൊഫഷണൽ മനുഷ്യ പരിഭാഷ ശുപാർശ ചെയ്യപ്പെടുന്നു. ഈ വിവർത്തനം ഉപയോഗിച്ചതിന്റെ ഫലമായി ഉണ്ടായ任何 തെറ്റിദ്ധാരണകൾക്കും തെറ്റായ വ്യാഖ്യാനങ്ങൾക്കും ഞങ്ങൾ ഉത്തരവാദികളല്ല.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

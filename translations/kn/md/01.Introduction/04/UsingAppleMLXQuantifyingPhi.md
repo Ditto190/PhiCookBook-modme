@@ -1,0 +1,64 @@
+# **Apple MLX ಫ್ರೇಮ್‌ವರ್ಕ್ ಬಳಸಿ Phi-3.5 ಅನ್ನು ಕ್ವಾಂಟೈಸ್ ಮಾಡುವುದು**
+
+
+MLX ಆಗಿದೆ Apple ಸಿಲಿಕಾನ್‌ನ ಮೇಲೆ ಮಷೀನ Learning ಸಂಶೋಧನೆಗಾಗಿ ಒಂದು ಅರೇ ಫ್ರೇಮ್‌ವರ್ಕ್, ಇದನ್ನು Apple machine learning research ನಿಮ್ಮಿಗೆ ಒದಗಿಸಿದೆ.
+
+MLX ಅನ್ನು ಮಷೀನ್ ಲರ್ನಿಂಗ್ ಸಂಶೋಧಕರಿಂದ ಮಷೀನ್ ಲರ್ನಿಂಗ್ ಸಂಶೋಧಕರಿಗಾಗಿ ರೂಪಿಸಲಾಗಿದೆ. ಫ್ರೇಮ್‌ವರ್ಕ್ ಬಳಸಲು ಸುಲಭವಾಗಿದ್ದು ಮೋಡೆಲ್ ತರಬೇತಿ ಮತ್ತು ನಿಯೋಜನೆಗೆ ಪರಿಣಾಮಕಾರಿಯಾಗಿ ಕಲ್ಪಿಸಲಾಗಿದೆ. ಫ್ರೇಮ್‌ವರ್ಕ್‌ನ ಡಿಸೈನ್ ಸ್ವತಂತ್ರವಾಗಿ ಸಾದಾ ಮತ್ತು ಸಂಯೋಜನೋಚಿತವಾಗಿದೆ. ಹೊಸ ಐ디어ಗಳನ್ನು ವೇಗವಾಗಿ ಅನ್ವೇಷಿಸಲು ಸಂಶೋಧಕರು MLX ಅನ್ನು ಸುಲಭವಾಗಿ ವಿಸ್ತರಿಸಬಹುದು ಮತ್ತು ಸುಧಾರಿಸಬಹುದಾಗಿ ನಾವು ಉದ್ದೇಶಿಸುತ್ತೇವೆ.
+
+MLX ಮೂಲಕ Apple Silicon ಸಾಧನಗಳಲ್ಲಿ LLMಗಳನ್ನು ವೇಗಗೊಳಿಸಬಹುದು, ಮತ್ತು ಮಾದರಿಗಳನ್ನು ಸ್ಥಳೀಯವಾಗಿ ಸುಲಭವಾಗಿ ಚಲಾಯಿಸಬಹುದು.
+
+ಈಗ Apple MLX ಫ್ರೇಮ್‌ವರ್ಕ್ Phi-3.5-Instruct(**Apple MLX ಫ್ರೇಮ್‌ವರ್ಕ್ ಬೆಂಬಲ**), Phi-3.5-Vision(**MLX-VLM ಫ್ರೇಮ್‌ವರ್ಕ್ ಬೆಂಬಲ**) ಮತ್ತು Phi-3.5-MoE(**Apple MLX ಫ್ರೇಮ್‌ವರ್ಕ್ ಬೆಂಬಲ**) ಗಳಿಗೆ ಕ್ವಾಂಟೈಸೇಶನ್ ಪರಿವರ್ತನೆಯನ್ನು ಬೆಂಬಲಿಸುತೆ. ಇದನ್ನು ಮುಂದుగా ಪ್ರಯತ್ನಿಸೋಣ:
+
+### **Phi-3.5-Instruct**
+
+
+```bash
+
+python -m mlx_lm.convert --hf-path microsoft/Phi-3.5-mini-instruct -q
+
+```
+
+
+### **Phi-3.5-Vision**
+
+
+```bash
+
+python -m mlxv_lm.convert --hf-path microsoft/Phi-3.5-vision-instruct -q
+
+```
+
+### **Phi-3.5-MoE**
+
+
+```bash
+
+python -m mlx_lm.convert --hf-path microsoft/Phi-3.5-MoE-instruct  -q
+
+```
+
+
+
+### **🤖 Apple MLX ಜೊತೆಗೆ Phi-3.5ಕ್ಕೆ ಉದಾಹರಣೆಗಳು**
+
+| Labs    | Introduce | Go |
+| -------- | ------- |  ------- |
+| 🚀 Lab-Introduce Phi-3.5 Instruct  | Phi-3.5 Instruct ಅನ್ನು Apple MLX ಫ್ರೇಮ್‌ವರ್ಕ್ ಜೊತೆಗೆ ಹೇಗೆ ಬಳಸುವುದು ಎಂಬುದನ್ನು ಕಲಿಯಿರಿ   |  [ಹೋಗಿ](../../../code/09.UpdateSamples/Aug/mlx-phi35-instruct.ipynb)    |
+| 🚀 Lab-Introduce Phi-3.5 Vision (image) | Phi-3.5 Vision ಅನ್ನು Apple MLX ಫ್ರೇಮ್‌ವರ್ಕ್‌ ಬಳಸಿ ಚಿತ್ರ ವಿಶ್ಲೇಷಿಸಲು ಹೇಗೆ ಬಳಸುವುದು ಎಂಬುದನ್ನು ಕಲಿಯಿರಿ     |  [ಹೋಗಿ](../../../code/09.UpdateSamples/Aug/mlx-phi35-vision.ipynb)    |
+| 🚀 Lab-Introduce Phi-3.5 Vision (moE)   | Phi-3.5 MoE ಅನ್ನು Apple MLX ಫ್ರೇಮ್‌ವರ್ಕ್ ಜೊತೆಗೆ ಹೇಗೆ ಬಳಸುವುದು ಎಂಬುದನ್ನು ಕಲಿಯಿರಿ  |  [ಹೋಗಿ](../../../code/09.UpdateSamples/Aug/mlx-phi35-moe.ipynb)    |
+
+
+## **ಸಂಪನ್ಮೂಲಗಳು**
+
+1. Apple MLX ಫ್ರೇಮ್‌ವರ್ಕ್ ಬಗ್ಗೆ ತಿಳಿಯಿರಿ [https://ml-explore.github.io/mlx/](https://ml-explore.github.io/mlx/)
+
+2. Apple MLX GitHub ರೆಪೊ [https://github.com/ml-explore](https://github.com/ml-explore/mlx)
+
+3. MLX-VLM GitHub ರೆಪೊ [https://github.com/Blaizzy/mlx-vlm](https://github.com/Blaizzy/mlx-vlm)
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+ವಜ್ಞಾಪನೆ:
+ಈ ದಸ್ತಾವೇಜನ್ನು AI ಅನುವಾದ ಸೇವೆ Co‑op Translator (https://github.com/Azure/co-op-translator) ಬಳಸಿ ಅನುವಾದಿಸಲಾಗಿದೆ. ನಾವು ಶುದ್ಧತೆಯನ್ನು ಕಾಪಾಡಲು ಪ್ರಯತ್ನಿಸಿದರೂ, ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದಗಳಲ್ಲಿ ದೋಷಗಳು ಅಥವಾ ತಪ್ಪುಗಳು ಇರಬಹುದೆಂದು ದಯವಿಟ್ಟು ಗಮನಿಸಿರಿ. ಮೂಲ ಭಾಷೆಯಲ್ಲಿ ಇರುವ ಮೂಲ ದಸ್ತಾವೇಜನ್ನು ಅಧಿಕೃತ ಮೂಲವೆಂದು ಪರಿಗಣಿಸಬೇಕು. ಮಹತ್ವದ ಮಾಹಿತಿಗೆ ವೃತ್ತಿಪರ ಮಾನವ ಅನುವಾದವನ್ನು ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ. ಈ ಅನುವಾದದ ಬಳಕೆಯಿಂದ ಉಂಟಾಗುವ ಯಾವುದೇ ತಪ್ಪು ಅರ್ಥಗೊಳ್ಳುವಿಕೆಗಳು ಅಥವಾ ಭ್ರಮೆಗಳಿಗಾಗಿ ನಾವು ಹೊಣೆಗಾರರಲ್ಲ.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

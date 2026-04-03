@@ -1,0 +1,80 @@
+# **Inferencija Phi-3 s Apple MLX Frameworkom**
+
+## **Što je MLX Framework**
+
+MLX je framework za rad s nizovima podataka namijenjen istraživanju strojnog učenja na Apple siliciju, razvijen od strane Apple istraživača strojnog učenja.
+
+MLX su osmislili istraživači strojnog učenja za istraživače strojnog učenja. Framework je dizajniran da bude jednostavan za korištenje, ali i učinkovit za treniranje i implementaciju modela. Sam dizajn frameworka je također konceptualno jednostavan. Cilj nam je olakšati istraživačima proširivanje i poboljšavanje MLX-a kako bi brzo mogli isprobavati nove ideje.
+
+LLM-ovi se mogu ubrzati na Apple Silicon uređajima pomoću MLX-a, a modeli se mogu vrlo jednostavno pokretati lokalno.
+
+## **Korištenje MLX-a za inferenciju Phi-3-mini**
+
+### **1. Postavljanje MLX okruženja**
+
+1. Python 3.11.x  
+2. Instalirajte MLX biblioteku
+
+
+```bash
+
+pip install mlx-lm
+
+```
+
+### **2. Pokretanje Phi-3-mini u Terminalu s MLX-om**
+
+
+```bash
+
+python -m mlx_lm.generate --model microsoft/Phi-3-mini-4k-instruct --max-token 2048 --prompt  "<|user|>\nCan you introduce yourself<|end|>\n<|assistant|>"
+
+```
+
+Rezultat (moje okruženje je Apple M1 Max, 64GB) je
+
+![Terminal](../../../../../translated_images/hr/01.5cf57df8f7407cf9.webp)
+
+### **3. Kvantizacija Phi-3-mini s MLX-om u Terminalu**
+
+
+```bash
+
+python -m mlx_lm.convert --hf-path microsoft/Phi-3-mini-4k-instruct
+
+```
+
+***Napomena:*** Model se može kvantizirati pomoću mlx_lm.convert, a zadana kvantizacija je INT4. Ovaj primjer kvantizira Phi-3-mini u INT4.
+
+Model se može kvantizirati pomoću mlx_lm.convert, a zadana kvantizacija je INT4. Ovaj primjer služi za kvantizaciju Phi-3-mini u INT4. Nakon kvantizacije, model će biti spremljen u zadani direktorij ./mlx_model
+
+Model kvantiziran s MLX-om možemo testirati iz terminala
+
+
+```bash
+
+python -m mlx_lm.generate --model ./mlx_model/ --max-token 2048 --prompt  "<|user|>\nCan you introduce yourself<|end|>\n<|assistant|>"
+
+```
+
+Rezultat je
+
+![INT4](../../../../../translated_images/hr/02.7b188681a8eadbc1.webp)
+
+
+### **4. Pokretanje Phi-3-mini s MLX-om u Jupyter Notebooku**
+
+
+![Notebook](../../../../../translated_images/hr/03.b9705a3a5aaa89f9.webp)
+
+***Napomena:*** Molimo pročitajte ovaj primjer [kliknite na ovaj link](../../../../../code/03.Inference/MLX/MLX_DEMO.ipynb)
+
+
+## **Resursi**
+
+1. Saznajte više o Apple MLX Frameworku [https://ml-explore.github.io](https://ml-explore.github.io/mlx/build/html/index.html)
+
+2. Apple MLX GitHub repozitorij [https://github.com/ml-explore](https://github.com/ml-explore)
+
+**Odricanje od odgovornosti**:  
+Ovaj dokument je preveden korištenjem AI usluge za prevođenje [Co-op Translator](https://github.com/Azure/co-op-translator). Iako težimo točnosti, imajte na umu da automatski prijevodi mogu sadržavati pogreške ili netočnosti. Izvorni dokument na izvornom jeziku treba smatrati autoritativnim izvorom. Za kritične informacije preporučuje se profesionalni ljudski prijevod. Ne snosimo odgovornost za bilo kakva nesporazume ili pogrešna tumačenja koja proizlaze iz korištenja ovog prijevoda.

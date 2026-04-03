@@ -1,0 +1,70 @@
+# Utilizzo della GPU Windows per creare una soluzione Prompt flow con Phi-3.5-Instruct ONNX
+
+Il documento seguente è un esempio di come utilizzare PromptFlow con ONNX (Open Neural Network Exchange) per sviluppare applicazioni AI basate sui modelli Phi-3.
+
+PromptFlow è una suite di strumenti di sviluppo progettata per semplificare l’intero ciclo di sviluppo di applicazioni AI basate su LLM (Large Language Model), dalla fase di ideazione e prototipazione fino a test e valutazione.
+
+Integrando PromptFlow con ONNX, gli sviluppatori possono:
+
+- Ottimizzare le prestazioni del modello: sfruttare ONNX per un’inferenza e un deployment efficienti del modello.
+- Semplificare lo sviluppo: utilizzare PromptFlow per gestire il flusso di lavoro e automatizzare le attività ripetitive.
+- Migliorare la collaborazione: facilitare una migliore collaborazione tra i membri del team offrendo un ambiente di sviluppo unificato.
+
+**Prompt flow** è una suite di strumenti di sviluppo pensata per semplificare l’intero ciclo di sviluppo di applicazioni AI basate su LLM, dall’ideazione, prototipazione, test, valutazione fino al deployment in produzione e monitoraggio. Rende molto più semplice l’ingegneria dei prompt e permette di costruire app LLM con qualità da produzione.
+
+Prompt flow può connettersi a OpenAI, Azure OpenAI Service e modelli personalizzabili (Huggingface, LLM/SLM locali). L’obiettivo è distribuire il modello ONNX quantizzato di Phi-3.5 su applicazioni locali. Prompt flow ci aiuta a pianificare meglio il nostro business e a completare soluzioni locali basate su Phi-3.5. In questo esempio, combineremo ONNX Runtime GenAI Library per realizzare la soluzione Prompt flow basata su GPU Windows.
+
+## **Installazione**
+
+### **ONNX Runtime GenAI per GPU Windows**
+
+Leggi questa guida per configurare ONNX Runtime GenAI per GPU Windows [clicca qui](./ORTWindowGPUGuideline.md)
+
+### **Configurare Prompt flow in VSCode**
+
+1. Installa l’estensione Prompt flow per VS Code
+
+![pfvscode](../../../../../../translated_images/it/pfvscode.eff93dfc66a42cbe.webp)
+
+2. Dopo aver installato l’estensione Prompt flow per VS Code, clicca sull’estensione e scegli **Installation dependencies**; segui questa guida per installare il Prompt flow SDK nel tuo ambiente
+
+![pfsetup](../../../../../../translated_images/it/pfsetup.b46e93096f5a254f.webp)
+
+3. Scarica il [Codice di esempio](../../../../../../code/09.UpdateSamples/Aug/pf/onnx_inference_pf) e apri questo esempio con VS Code
+
+![pfsample](../../../../../../translated_images/it/pfsample.8d89e70584ffe7c4.webp)
+
+4. Apri **flow.dag.yaml** per selezionare il tuo ambiente Python
+
+![pfdag](../../../../../../translated_images/it/pfdag.264a77f7366458ff.webp)
+
+   Apri **chat_phi3_ort.py** per modificare la posizione del tuo modello Phi-3.5-instruct ONNX
+
+![pfphi](../../../../../../translated_images/it/pfphi.72da81d74244b45f.webp)
+
+5. Esegui il tuo prompt flow per il test
+
+Apri **flow.dag.yaml** e clicca su visual editor
+
+![pfv](../../../../../../translated_images/it/pfv.ba8a81f34b20f603.webp)
+
+dopo aver cliccato, esegui il flusso per testarlo
+
+![pfflow](../../../../../../translated_images/it/pfflow.4e1135a089b1ce1b.webp)
+
+1. Puoi eseguire batch nel terminale per verificare più risultati
+
+
+```bash
+
+pf run create --file batch_run.yaml --stream --name 'Your eval qa name'    
+
+```
+
+Puoi controllare i risultati nel tuo browser predefinito
+
+
+![pfresult](../../../../../../translated_images/it/pfresult.c22c826f8062d7cb.webp)
+
+**Disclaimer**:  
+Questo documento è stato tradotto utilizzando il servizio di traduzione automatica [Co-op Translator](https://github.com/Azure/co-op-translator). Pur impegnandoci per garantire accuratezza, si prega di notare che le traduzioni automatiche possono contenere errori o imprecisioni. Il documento originale nella sua lingua nativa deve essere considerato la fonte autorevole. Per informazioni critiche, si raccomanda una traduzione professionale effettuata da un umano. Non ci assumiamo alcuna responsabilità per eventuali malintesi o interpretazioni errate derivanti dall’uso di questa traduzione.

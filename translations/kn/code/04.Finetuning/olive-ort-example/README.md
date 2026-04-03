@@ -1,0 +1,64 @@
+# Phi3 ಅನ್ನು Olive ಬಳಸಿ ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಿ
+
+ಈ ಉದಾಹರಣೆಯಲ್ಲಿ ನೀವು Olive ಅನ್ನು ಬಳಸುತ್ತೀರಿ:
+
+1. ವಾಕ್ಯಗಳನ್ನು Sad, Joy, Fear, Surprise ಎಂದು ವರ್ಗೀಕರಿಸಲು LoRA ಅಡಾಪ್ಟರ್ ಅನ್ನು ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಿ.
+1. ಅಡಾಪ್ಟರ್ ತೂಕಗಳನ್ನು ಬೇಸ್ ಮಾದರಿಯಲ್ಲಿ ವಿಲೀನಗೊಳಿಸಿ.
+1. ಮಾದರಿಯನ್ನು `int4` ಗೆ ಒಪ್ಟಿಮೈಜ್ ಮಾಡಿ ಮತ್ತು ಕ್ವಾಂಟೈಸ್ ಮಾಡಿ.
+
+ನಾವು ಹೇಗೆ ONNX Runtime (ORT) Generate API ಬಳಸಿ ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಿದ ಮಾದರಿಯಿಂದ ಇನ್ಫರೆನ್ಸ್ ಮಾಡಲು ಎಂಬುದನ್ನು ಸಹ ತೋರಿಸುತ್ತೇವೆ.
+
+> **⚠️ ಫೈನ್‑ಟ್ಯೂನಿಂಗಿಗಾಗಿ, ನಿಮಗೆ ಸೂಕ್ತ GPU ಲಭ್ಯವಿರಬೇಕು - ಉದಾಹರಣೆಗೆ, A10, V100, A100.**
+
+## 💾 ಸ್ಥಾಪನೆ
+
+ಹೊಸ Python ವರ್ಚುವಲ್ ಪರಿಸರವನ್ನು ರಚಿಸಿ (ಉದಾಹರಣೆಗೆ, `conda` ಬಳಸಿ):
+
+```bash
+conda create -n olive-ai python=3.11
+conda activate olive-ai
+```
+
+Next, install the Olive and the dependencies for a fine-tuning workflow:
+
+```bash
+cd Phi-3CookBook/code/04.Finetuning/olive-ort-example
+pip install olive-ai[gpu]
+pip install -r requirements.txt
+```
+
+## 🧪 Olive ಬಳಸಿ Phi3 ಅನ್ನು ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡುವುದು
+[Olive configuration file](../../../../../code/04.Finetuning/olive-ort-example/phrase-classification.json) ಒಂದು *workflow* ಅನ್ನು ಮತ್ತು ಕೆಳಕಂಡ *passes* ಅನ್ನು ಒಳಗೊಂಡಿದೆ:
+
+Phi3 -> LoRA -> MergeAdapterWeights -> ModelBuilder
+
+ಒಟ್ಟಾರೆ, ಈ workflow ಕೆಳಕಂಡವುಗಳನ್ನು ಮಾಡುತ್ತದೆ:
+
+1. Phi3 ಅನ್ನು 150 ಹಂತಗಳಿಗಾಗಿ ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡುತ್ತದೆ (ನೀವು ಇದನ್ನು ಬದಲಾಯಿಸಬಹುದು) — [dataset/data-classification.json](../../../../../code/04.Finetuning/olive-ort-example/dataset/dataset-classification.json) ಡೇಟಾ ಬಳಸಿ.
+1. LoRA ಅಡಾಪ್ಟರ್ ತೂಕಗಳನ್ನು ಬೇಸ್ ಮಾದರಿಯಲ್ಲಿ ವಿಲೀನಗೊಳಿಸು. ಇದರಿಂದ ನಿಮಗೆ ONNX ಫಾರ್ಮ್ಯಾಟ್‌ನಲ್ಲಿ ಒಂದು ಏಕೈಕ ಮಾದರಿ ಆರ್ಥಿಫ್ಯಾಕ್ಟ್ ಸಿಗುತ್ತದೆ.
+1. Model Builder ONNX runtimeಗಾಗಿ ಮಾದರಿಯನ್ನು ಒಪ್ಟಿಮೈಜ್ ಮಾಡುತ್ತದೆ *ಮತ್ತು* ಮಾದರಿಯನ್ನು `int4` ಗೆ ಕ್ವಾಂಟೈಸ್ ಮಾಡುತ್ತದೆ.
+
+ವರ್ಕ್‌ಫ್ಲೋ ಅನ್ನು ಕಾರ್ಯಗತಗೊಳಿಸಲು, ರನ್ ಮಾಡಿ:
+
+```bash
+olive run --config phrase-classification.json
+```
+
+Olive ಪೂರ್ಣಗೊಂಡ ನಂತರ, ನೀವು ಒಪ್ಟಿಮೈಸ್ ಮಾಡಿದ `int4` ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಿದ Phi3 ಮಾದರಿ ಈ ಸ್ಥಳದಲ್ಲಿದೆ: `code/04.Finetuning/olive-ort-example/models/lora-merge-mb/gpu-cuda_model`.
+
+## 🧑‍💻 ನಿಮ್ಮ ಅಪ್ಲಿಕೇಶನ್‌ನಲ್ಲಿ ಫೈನ್-ಟ್ಯೂನ್ ಮಾಡಿದ Phi3 ಅನ್ನು ಸಂಯೋಜಿಸುವುದು
+
+ಆಪ್ ಅನ್ನು ಓಡಿಸಲು:
+
+```bash
+python app/app.py --phrase "cricket is a wonderful sport!" --model-path models/lora-merge-mb/gpu-cuda_model
+```
+
+ಈ ಪ್ರತಿಕ್ರಿಯೆವು ವಾಕ್ಯದ ಒಂದೇ ಒಂದು ಪದದ ವರ್ಗೀಕರಣವಾಗಿರಬೇಕು (Sad/Joy/Fear/Surprise).
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+ಅಸ್ವೀಕರಣ:
+ಈ ದಸ್ತಾವೇಜನ್ನು AI ಅನುವಾದ ಸೇವೆ [Co-op Translator](https://github.com/Azure/co-op-translator) ಬಳಸಿ ಅನುವಾದಿಸಲಾಗಿದೆ. ನಾವು ನಿಖರತೆಯನ್ನು ಸಾಧಿಸಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದರೂ, ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದಗಳಲ್ಲಿ ದೋಷಗಳು ಅಥವಾ ತಪ್ಪುತೆಗಳು ಇರಬಹುದೆಂದು ದಯವಿಟ್ಟು ಗಮನಿಸಿ. ಮೂಲಭಾಷೆಯಲ್ಲಿ ಇರುವ ಮೂಲ ದಸ್ತಾವೇಜನ್ನು ಅಧಿಕೃತ ಮತ್ತು ಪ್ರಾಮಾಣಿಕ ಮೂಲವೆಂದು ಪರಿಗಣಿಸಬೇಕು. ನಿರ್ಣಯಾತ್ಮಕ ಮಾಹಿತಿಗಾಗಿ ವೃತ್ತಿಪರ ಮಾನವ ಅನುವಾದವನ್ನು ಶಿಫಾರಸು ಮಾಡಲಾಗುತ್ತದೆ. ಈ ಅನುವಾದದ ಬಳಕೆಯಿಂದ ಉಂಟಾಗುವ ಯಾವುದೇ ಗೊಂದಲಗಳು ಅಥವಾ ತಪ್ಪು ವ್ಯಾಖ್ಯಾನಗಳಿಗಾಗಿ ನಾವು ಹೊಣೆಗಾರರಾಗುವುದಿಲ್ಲ.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

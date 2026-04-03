@@ -1,0 +1,107 @@
+# **Intel OpenVINO ಬಳಸಿ Phi-3.5 ಅನ್ನು ಪ್ರಮಾಣೀಕರಣ ಮಾಡುವುದು**
+
+Intel ಅತ್ಯಂತ ಪರಂಪರಾಧಿಕ CPU ತಯಾರಕರು ಆಗಿದ್ದು ಅನೇಕ ಬಳಕೆದಾರರನ್ನು ಹೊಂದಿದೆ. ಯಂತ್ರಶಿಕ್ಷಣ ಮತ್ತು ಡೀಪ್ ಲರ್ನಿಂಗ್ ಬಿಕ್ಕು ಬೆಳೆಯುವುದರಿಂದ, Intel ಕೂಡ AI ವೇಗೀಕರಣದ ಸ್ಪರ್ಧೆಯಲ್ಲಿ ಸೇರಿಕೊಂಡಿದೆ. ಮಾದರಿ ಇನ್ಫರೆನ್ಸ್‌ಗೆ Intel ಕೇವಲ GPU ಮತ್ತು CPU ಗಳನ್ನೇ ಬಳಸದಿದ್ದು, NPU ಗಳನ್ನು ಸಹ ಬಳಸುತ್ತದೆ.
+
+ನಾವು Phi-3.x Family ಅನ್ನು ಎಂಡ್‌ಸೈಡ್‌ನಲ್ಲಿ ನಿಯೋಜಿಸಲು ಆಶಿಸುತ್ತಿದ್ದೇವೆ, ಅದು AI PC ಮತ್ತು Copilot PC ಗಳುಗಳಲ್ಲಿ ಅತ್ಯಂತ ಮುಖ್ಯ ಭಾಗವಾಗಬೇಕು ಎಂದು ನಿರೀಕ್ಷಿಸುತ್ತೇವೆ. ಎಂಡ್‌ಸೈಡ್‌ನಲ್ಲಿ ಮಾದರಿಯ ಲೋಡಿಂಗ್ ವಿಭಿನ್ನ ಹಾರ್ಡ್‌ವೇರ್ ತಯಾರಕರ ಸಹಕಾರದ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿರುತ್ತದೆ. ಈ ಅಧ್ಯಾಯವು ಮುಖ್ಯವಾಗಿ Intel OpenVINO ಅನ್ನು ಪ್ರಮಾಣೀಕರಿಸಿದ ಮಾದರಿಗಳ ಅನ್ವಯ ಘಟನೆಯ ಮೇಲೆ ಕೇಂದ್ರೀಕರಿಸುತ್ತದೆ.
+
+
+## **OpenVINO ಎಂದರೇನು**
+
+OpenVINOವು ಕ್ಲೌಡ್‌ನಿಂದ ಎಡ್ ವರೆಗೆ ಡೀಪ್ ಲರ್ನಿಂಗ್ ಮಾದರಿಗಳನ್ನು 최적ಗೊಳಿಸಲು ಮತ್ತು ನಿಯೋಜಿಸಲು 用ಡಾದ open-source ಟೂಲ್ಕಿಟ್ ಆಗಿದೆ. ಇದು ಜನರೇಟಿವ್ AI, ವೀಡಿಯೊ, ಆಡಿಯೋ ಮತ್ತು ಭಾಷಾ ಮುಂತಾದ ವಿವಿಧ ಬಳಕೆ ಪ್ರಕರಣಗಳಲ್ಲಿ ಡೀಪ್ ಲರ್ನಿಂಗ್ ಇನ್ಫರೆನ್ಸ್ ಅನ್ನು ವೇಗಗೊಳಿಸುತ್ತದೆ, ಮತ್ತು PyTorch, TensorFlow, ONNX ಮುಂತಾದ ಜನಪ್ರಿಯ ಫ್ರೇಮ್ವರ್ಕ್ ಗಳಿಂದ ಬಂದ ಮಾದರಿಗಳನ್ನೂ ಬೆಂಬಲಿಸುತ್ತದೆ. ಮಾದರಿಗಳನ್ನು ಪರಿವರ್ತಿಸಿ ಮತ್ತು 최적ಗೊಳಿಸಿ, ಮತ್ತು Intel® ಹಾರ್ಡ್‌ವೇರ್ ಮತ್ತು ಪರಿಸರಗಳ ಮಿಶ್ರಣದ ಮೇಲೆ, on-premises ಮತ್ತು on-device, ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಅಥವಾ ಕ್ಲೌಡ್‌ನಲ್ಲಿ ನಿಯೋಜಿಸಿ.
+
+ಈಗ OpenVINO ಮೂಲಕ ನೀವು Intel ಹಾರ್ಡ್ವೇರ್‌ನಲ್ಲಿ GenAI ಮಾದರಿಗಳನ್ನು ವೇಗವಾಗಿ ಪ್ರಮಾಣೀಕರಿಸಬಹುದು ಮತ್ತು ಮಾದರಿ ಉಲ್ಲೇಖವನ್ನು ವೇಗಗೊಳಿಸಬಹುದು.
+
+ಈಗ OpenVINO Phi-3.5-Vision ಮತ್ತು Phi-3.5 Instruct ನ ಪ್ರಮಾಣೀಕರಣ ಪರಿವರ್ತನೆಯನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ
+
+### **ಪರಿಸರ ಸ್ಥಾಪನೆ**
+
+ದಯವಿಟ್ಟು ಕೆಳಗಿನ ಪರಿಸರ ಅವಲಂಬನೆಗಳು 설치 செய்யப்பட்டಿರುವುದನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ, ಇದು requirement.txt
+
+```txt
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+optimum-intel>=1.18.2
+nncf>=2.11.0
+openvino>=2024.3.0
+transformers>=4.40
+openvino-genai>=2024.3.0.0
+
+```
+
+### **OpenVINO ಬಳಸಿ Phi-3.5-Instruct ಅನ್ನು ಪ್ರಮಾಣೀಕರಿಸುವುದು**
+
+ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ದಯವಿಟ್ಟು ಈ ಸ್ಕ್ರಿಪ್ಟ್ ಅನ್ನು ಓಡಿಸಿ
+
+
+```bash
+
+
+export llm_model_id = "microsoft/Phi-3.5-mini-instruct"
+
+export llm_model_path = "your save quantizing Phi-3.5-instruct location"
+
+optimum-cli export openvino --model {llm_model_id} --task text-generation-with-past --weight-format int4 --group-size 128 --ratio 0.6  --sym  --trust-remote-code {llm_model_path}
+
+
+```
+
+### **OpenVINO ಬಳಸಿ Phi-3.5-Vision ಅನ್ನು ಪ್ರಮಾಣೀಕರಿಸುವುದು**
+
+ದಯವಿಟ್ಟು ಈ ಸ್ಕ್ರಿಪ್ಟ್ ಅನ್ನು Python ಅಥವಾ Jupyter lab ನಲ್ಲಿ ಓಡಿಸಿ
+
+```python
+
+import requests
+from pathlib import Path
+from ov_phi3_vision import convert_phi3_model
+import nncf
+
+if not Path("ov_phi3_vision.py").exists():
+    r = requests.get(url="https://raw.githubusercontent.com/openvinotoolkit/openvino_notebooks/latest/notebooks/phi-3-vision/ov_phi3_vision.py")
+    open("ov_phi3_vision.py", "w").write(r.text)
+
+
+if not Path("gradio_helper.py").exists():
+    r = requests.get(url="https://raw.githubusercontent.com/openvinotoolkit/openvino_notebooks/latest/notebooks/phi-3-vision/gradio_helper.py")
+    open("gradio_helper.py", "w").write(r.text)
+
+if not Path("notebook_utils.py").exists():
+    r = requests.get(url="https://raw.githubusercontent.com/openvinotoolkit/openvino_notebooks/latest/utils/notebook_utils.py")
+    open("notebook_utils.py", "w").write(r.text)
+
+
+
+model_id = "microsoft/Phi-3.5-vision-instruct"
+out_dir = Path("../model/phi-3.5-vision-128k-instruct-ov")
+compression_configuration = {
+    "mode": nncf.CompressWeightsMode.INT4_SYM,
+    "group_size": 64,
+    "ratio": 0.6,
+}
+if not out_dir.exists():
+    convert_phi3_model(model_id, out_dir, compression_configuration)
+
+```
+
+### **🤖 Intel OpenVINO ಜೊತೆಗೆ Phi-3.5 ಗಾಗಿ ಉದಾಹರಣೆಗಳು**
+
+| ಲ್ಯಾಬ್‌ಗಳು    | ಪರಿಚಯ | ಹೋಗಿ |
+| -------- | ------- |  ------- |
+| 🚀 ಲ್ಯಾಬ್-ಪರಿಚಯ Phi-3.5 Instruct  | ನಿಮ್ಮ AI PC ನಲ್ಲಿ Phi-3.5 Instruct ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು ಎಂಬುದನ್ನು ಕಲಿಯಿರಿ    |  [ಹೋಗಿ](../../../code/09.UpdateSamples/Aug/intel-phi35-instruct-zh.ipynb)    |
+| 🚀 ಲ್ಯಾಬ್-ಪರಿಚಯ Phi-3.5 Vision (ಚಿತ್ರ) | ನಿಮ್ಮ AI PC ನಲ್ಲಿ ಚಿತ್ರ ವಿಶ್ಲೇಷಣೆಗೆ Phi-3.5 Vision ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು ಎಂದು ಕಲಿಯಿರಿ      |  [ಹೋಗಿ](../../../code/09.UpdateSamples/Aug/intel-phi35-vision-img.ipynb)    |
+| 🚀 ಲ್ಯಾಬ್-ಪರಿಚಯ Phi-3.5 Vision (ವೀಡಿಯೋ)   | ನಿಮ್ಮ AI PC ನಲ್ಲಿ ವೀಡಿಯೋ ವಿಶ್ಲೇಷಣೆಗೆ Phi-3.5 Vision ಅನ್ನು ಹೇಗೆ ಬಳಸುವುದು ಎಂದು ಕಲಿಯಿರಿ    |  [ಹೋಗಿ](../../../code/09.UpdateSamples/Aug/intel-phi35-vision-video.ipynb)    |
+
+
+
+## **ಸಂಪನ್ಮೂಲಗಳು**
+
+1. Intel OpenVINO ಕುರಿತು ಹೆಚ್ಚಿನ ಮಾಹಿತಿಗಾಗಿ [https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/overview.html)
+
+2. Intel OpenVINO GitHub ರೆಪೊ [https://github.com/openvinotoolkit/openvino.genai](https://github.com/openvinotoolkit/openvino.genai)
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+ಜವಾಬ್ದಾರಿ ನಿರಾಕರಣೆ:
+ಈ ದಾಖಲೆ ಅನ್ನು ಎಐ ಅನುವಾದ ಸೇವೆ [Co-op Translator](https://github.com/Azure/co-op-translator) ಬಳಸಿ ಅನುವಾದಿಸಲಾಗಿದೆ. ನಾವು ಶುದ್ಧತೆಗೆ ಪ್ರಯತ್ನಿಸಿದರೂ, ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದಗಳಲ್ಲಿ ತಪ್ಪುಗಳು ಅಥವಾ ಅನಿಖರತೆಗಳು ಇರಬಹುದು ಎಂಬುದನ್ನು ದಯವಿಟ್ಟು ಗಮನದಲ್ಲಿಟ್ಟುಕೊಳ್ಳಿ. ಮೂಲ ಭಾಷೆಯಲ್ಲಿರುವ ಮೂಲ ದಾಖಲೆಯನ್ನು ಅಧಿಕೃತ ಮೂಲವೆಂದು ಪರಿಗಣಿಸಬೇಕು. ಪ್ರಮುಖ ಮಾಹಿತಿಗಾಗಿ ವೃತ್ತಿಪರ ಮಾನವ ಅನುವಾದವನ್ನು ಶಿಫಾರಸುಿಸಲಾಗುತ್ತದೆ. ಈ ಅನುವಾದದ ಬಳಕೆಯಿಂದ ಉಂಟಾಗುವ ಯಾವುದೇ ತಪ್ಪು ತಿಳಿವುಗಳು ಅಥವಾ ತಪ್ಪಾಗಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳುವುದರಿಂದ ಉಂಟಾಗುವ ಫಲಿತಾಂಶಗಳಿಗೆ ನಾವು ಹೊಣೆಗಾರರಲ್ಲ.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->

@@ -1,0 +1,64 @@
+# Olive ഉപയോഗിച്ച് Phi3 ഫൈൻ-ട്യൂൺ ചെയ്യുക
+
+ഈ ഉദാഹരണത്തിൽ നിങ്ങൾ Olive ഉപയോഗിച്ച് ചെയ്യുന്നത്:
+
+1. വാക്യങ്ങളെ Sad, Joy, Fear, Surprise എന്നിങ്ങനെ വർഗീകരിക്കാൻ ഒരു LoRA അഡാപ്റ്ററെ ഫൈൻ-ട്യൂൺ ചെയ്യുക.
+1. അഡാപ്റ്റർ വെയ്റ്റുകൾ അടിസ്ഥാന മോഡലിലേക്ക് ലയിപ്പിക്കുക.
+1. മോഡൽ optimize ചെയ്തു `int4` ആയി ക്വാണ്ടൈസുചെയ്യുക.
+
+ഞങ്ങൾ ഫൈൻ-ട്യൂൺ ചെയ്ത മോഡൽ ONNX Runtime (ORT) Generate API ഉപയോഗിച്ച് ഇൻഫറൻസ് ചെയ്യുന്നത് എങ്ങനെ ചെയ്യാമെന്ന് കാണിക്കും.
+
+> **⚠️ ഫൈൻ-ട്യൂണിങ്ങിനായി അനുയോജ്യമായ GPU ലഭ്യമായിരിക്കണം - ഉദാഹരണത്തിന്, A10, V100, A100.**
+
+## 💾 ഇൻസ്റ്റാൾ
+
+ഒരു പുതിയ Python വെർച്ച്വൽ എൻവയോൺമെന്റ് സൃഷ്ടിക്കുക (ഉദാഹരണത്തിന്, `conda` ഉപയോഗിച്ച്):
+
+```bash
+conda create -n olive-ai python=3.11
+conda activate olive-ai
+```
+
+Next, install the Olive and the dependencies for a fine-tuning workflow:
+
+```bash
+cd Phi-3CookBook/code/04.Finetuning/olive-ort-example
+pip install olive-ai[gpu]
+pip install -r requirements.txt
+```
+
+## 🧪 Olive ഉപയോഗിച്ച് Phi3 ഫൈൻ-ട്യൂൺ ചെയ്യുക
+[Olive configuration file](../../../../../code/03.Finetuning/olive-ort-example/phrase-classification.json) താഴെ കാണിച്ചിരിക്കുന്ന *വർക്‌ഫ്ലോ* യിൽ താഴെപ്പറയുന്ന *പാസുകൾ* അടങ്ങിയിരിക്കുന്നു:
+
+Phi3 -> LoRA -> MergeAdapterWeights -> ModelBuilder
+
+ലഘുവായി, ഈ വർക്‌ഫ്ലോ ചെയ്യുന്നതാണ്:
+
+1. [dataset/data-classification.json](../../../../../code/03.Finetuning/olive-ort-example/dataset/dataset-classification.json) ഡാറ്റ ഉപയോഗിച്ച് Phi3 (150 സ്റ്റെപ്പുകൾക്കായി, നിങ്ങൾ ഇത് മാറ്റാവുന്നതാണ്) ഫൈൻ-ട്യൂൺ ചെയ്യുക.
+1. LoRA അഡാപ്റ്റർ വെയ്റ്റുകൾ അടിസ്ഥാന മോഡലിലേക്കായി ലയിപ്പിക്കുക. ഇതോടെ നിങ്ങൾക്ക് ONNX ഫോർമാറ്റിലുള്ള ഒറ്റ മോഡൽ ആർട്ടിഫാക്ട് ലഭിക്കും.
+1. ModelBuilder മോഡലിനെ ONNX runtime-ന് അനുയോജ്യമായി optimize ചെയ്യുകയും *എന്നും* മോഡൽ `int4` ആയി ക്വാണ്ടൈസുചെയ്യുകയും ചെയ്യും.
+
+വർക്‌ഫ്ലോ പ്രവർത്തിപ്പിക്കാൻ, ചുവടെ നൽകിയത് റൺ ചെയ്യുക:
+
+```bash
+olive run --config phrase-classification.json
+```
+
+Olive പൂർത്തിയായപ്പോൾ, optimize ചെയ്ത `int4` ഫൈൻ-ട്യൂൺ ചെയ്ത Phi3 മോഡൽ ലഭ്യമാണ്: `code/04.Finetuning/olive-ort-example/models/lora-merge-mb/gpu-cuda_model`.
+
+## 🧑‍💻 ഫൈൻ-ട്യൂൺ ചെയ്ത Phi3 നിങ്ങളുടെ അപ്ലിക്കേഷനിൽ ഇന്റഗ്രേറ്റ് ചെയ്യുക
+
+ആപ്പ് റൺ ചെയ്യാൻ:
+
+```bash
+python app/app.py --phrase "cricket is a wonderful sport!" --model-path models/lora-merge-mb/gpu-cuda_model
+```
+
+ഈ പ്രതികരണം വാഖ്യത്തിന്റെ ഒറ്റവാക്കുള്ള വർഗീകരണം ആയിരിക്കണം (Sad/Joy/Fear/Surprise).
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+ഡിസ്ക്ലെയിമർ:
+ഈ രേഖ AI പരിഭാഷാ സേവനം Co‑op Translator (https://github.com/Azure/co-op-translator) ഉപയോഗിച്ച് പരിഭാഷപ്പെടുത്തിയതാണ്. ഞങ്ങൾ കൃത്യതയ്ക്ക് ശ്രമിച്ചുണ്ടെങ്കിലും, ഓട്ടോമേറ്റഡ് പരിഭാഷകളിൽ തെറ്റുകളോ അപൂർണ്ണതകളോ ഉണ്ടാവാവുന്നതാണ് എന്ന് ദയവായി ശ്രദ്ധിക്കുക. മൂലഭാഷയിലുള്ള അതിന്റെ ഒറിജിനൽ രേഖയെ അധികാരപരമായ ഉറവിടമായി കരുതുക. അത്യാവശ്യമായ വിവരങ്ങൾക്ക് പ്രൊഫഷണൽ മനുഷ്യപരിഭാഷ ശുപാർശ ചെയ്യപ്പെടുന്നു. ഈ പരിഭാഷയുടെ ഉപയോഗामुळे ഉണ്ടായേക്കാവുന്ന ഏതെങ്കിലും തെറ്റിദ്ധാരണകൾക്കും വ്യാഖ്യാനഭ്രമങ്ങൾക്കും ഞങ്ങൾ ഉത്തരവാദികളല്ല.
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
